@@ -1,0 +1,258 @@
+
+Imports System.Globalization
+
+Public Class Form1
+
+    Private Sub Form1_KeyDown(sender As Object, e As KeyEventArgs) Handles MyBase.KeyDown
+        ' Check if Ctrl+N was pressed
+        If e.Control AndAlso e.KeyCode = Keys.N Then
+            ' Clear the form or perform the desired action
+            NameTextBox.Text = " "
+            AddressTextBox.Text = " "
+            CityTextBox.Text = " "
+            StateTextBox.Text = " "
+            ZipMaskBox.Text = " "
+            DescriptionTextBox.Text = " "
+            PriceTextbox.Text = " "
+            WeightTextBox.Text = " "
+            QuantityTextBox.Clear()
+
+            ' Uncheck the Wholesale CheckBox control
+            CheckBox1.Checked = False
+
+            ' Reset the Transportation RadioButton controls to the U.S. Postal shipping method
+            PostalRadioButton.Checked = True
+
+            ' Set focus to NameTextBox control
+            NameTextBox.Focus()
+
+
+            ' Prevent further processing of the key event
+            e.SuppressKeyPress = True
+        End If
+
+        If MessageBox.Show("Are you sure you want to exit?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+            If e.Control AndAlso e.KeyCode = Keys.X Then
+                ' Close the form
+                Me.Close()
+
+                ' Prevent further processing of the key event
+                e.SuppressKeyPress = True
+
+            End If
+        End If
+        If e.Control AndAlso e.KeyCode = Keys.C Then
+            ' Perform the desired action (e.g., compute the form)
+            Dim pricePerPart As Decimal = Decimal.Parse(PriceTextbox.Text)
+            Dim quantity As Integer = Integer.Parse(QuantityTextBox.Text)
+            Dim weightPerPart As Decimal = Decimal.Parse(WeightTextBox.Text)
+            Dim cost As Decimal = Decimal.Round(pricePerPart * quantity, 2)
+            Dim taxDue As Decimal = ComputeSalesTaxDue()
+            Dim shippingHandling As Decimal = ComputeTransportHandling(weightPerPart, quantity)
+            Dim total As Decimal = cost + taxDue + shippingHandling
+
+
+            CostTextBox.Text = cost.ToString("C")
+            TaxTextBox.Text = taxDue.ToString("C")
+            ShippingTextBox.Text = shippingHandling.ToString("C")
+            TotalTextBox.Text = total.ToString("C")
+
+            ' Prevent further processing of the key event
+            e.SuppressKeyPress = True
+        End If
+    End Sub
+    Private Sub ComputeButton_Click(sender As Object, e As EventArgs) Handles Button1.Click, ComputeCtrlCToolStripMenuItem.Click
+
+        If Not ValidData() Then
+            Return
+        End If
+
+        Dim pricePerPart As Decimal = Decimal.Parse(PriceTextbox.Text)
+        Dim quantity As Integer = Integer.Parse(QuantityTextBox.Text)
+            Dim weightPerPart As Decimal = Decimal.Parse(WeightTextBox.Text)
+            Dim cost As Decimal = Decimal.Round(pricePerPart * quantity, 2)
+            Dim taxDue As Decimal = ComputeSalesTaxDue()
+            Dim shippingHandling As Decimal = ComputeTransportHandling(weightPerPart, quantity)
+            Dim total As Decimal = cost + taxDue + shippingHandling
+
+
+            CostTextBox.Text = cost.ToString("C")
+            TaxTextBox.Text = taxDue.ToString("C")
+            ShippingTextBox.Text = shippingHandling.ToString("C")
+            TotalTextBox.Text = total.ToString("C")
+
+    End Sub
+
+    Private Sub NewOrderButton_Click(sender As Object, e As EventArgs) Handles Button2.Click, NewOrderCtrlNToolStripMenuItem.Click
+
+        NameTextBox.Clear()
+        AddressTextBox.Clear()
+        CityTextBox.Clear()
+        StateTextBox.Clear()
+        ZipMaskBox.Clear()
+        DescriptionTextBox.Clear()
+        PriceTextbox.Clear()
+        WeightTextBox.Clear()
+        QuantityTextBox.Clear()
+
+
+        CheckBox1.Checked = False
+
+
+        PostalRadioButton.Checked = True
+
+
+        NameTextBox.Focus()
+    End Sub
+
+    Private Sub ExitButton_Click(sender As Object, e As EventArgs) Handles Exitbtn.Click, ExitToolStripMenuItem.Click
+        If MessageBox.Show("Do you want to exit?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+            Application.Exit()
+        End If
+    End Sub
+
+    Private Sub AboutMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        MessageBox.Show("Programmer: Osei-Tutu Morris", "About", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
+    Private Sub ColorMenuItem_Click(sender As Object, e As EventArgs) Handles ColorToolStripMenuItem.Click
+        If ColorDialog1.ShowDialog() = DialogResult.OK Then
+            Me.ForeColor = ColorDialog1.Color
+        End If
+    End Sub
+
+    Private Sub FontMenuItem_Click(sender As Object, e As EventArgs) Handles FontToolStripMenuItem.Click
+        If FontDialog1.ShowDialog() = DialogResult.OK Then
+            Me.Font = FontDialog1.Font
+        End If
+    End Sub
+
+    Private Function ValidData() As Boolean
+        If String.IsNullOrWhiteSpace(NameTextBox.Text) Then
+            ShowValidationError(NameTextBox, "Enter a customer name.")
+            Return False
+        End If
+
+        If String.IsNullOrWhiteSpace(AddressTextBox.Text) Then
+            ShowValidationError(AddressTextBox, "Enter an address.")
+            Return False
+        End If
+
+
+        If String.IsNullOrWhiteSpace(CityTextBox.Text) Then
+            ShowValidationError(CityTextBox, "Enter a city.")
+            Return False
+        End If
+
+
+        Dim stateCode As String = StateTextBox.Text.Trim().ToUpper()
+        If stateCode.Length <> 2 Then
+            ShowValidationError(StateTextBox, "Enter a valid state code.")
+            Return False
+        End If
+
+
+        Dim zipCode As String = ZipMaskBox.Text.Replace("-", "").Trim()
+        If zipCode.Length < 5 Then
+            ShowValidationError(ZipMaskBox, "Enter a valid zip code.")
+            Return False
+        End If
+
+        If String.IsNullOrWhiteSpace(DescriptionTextBox.Text) Then
+            ShowValidationError(DescriptionTextBox, "Enter a description.")
+            Return False
+        End If
+
+
+        Dim price As Decimal
+        If Not Decimal.TryParse(PriceTextbox.Text, NumberStyles.Currency, CultureInfo.CurrentCulture, price) OrElse price <= 0 Then
+            ShowValidationError(PriceTextbox, "Enter a valid price < zero.")
+            Return False
+        End If
+
+
+        Dim weight As Decimal
+        If Not Decimal.TryParse(WeightTextBox.Text, NumberStyles.Number, CultureInfo.CurrentCulture, weight) OrElse weight <= 0 Then
+            ShowValidationError(WeightTextBox, "Enter a valid weight greater than zero.")
+            Return False
+        End If
+
+
+        Dim quantity As Integer
+        If Not Integer.TryParse(QuantityTextBox.Text, quantity) OrElse quantity <= 0 Then
+            ShowValidationError(QuantityTextBox, "Enter a valid quantity < zero.")
+            Return False
+        End If
+
+        Return True
+    End Function
+
+
+    Private Sub ShowValidationError(control As Control, message As String)
+
+        MessageBox.Show(message, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        control.Focus()
+
+        If TypeOf control Is TextBox OrElse TypeOf control Is MaskedTextBox Then
+            Dim textBox As TextBoxBase = DirectCast(control, TextBoxBase)
+            textBox.SelectAll()
+        End If
+    End Sub
+    Private Function ComputeSalesTaxDue() As Decimal
+
+        Dim stateCode As String = StateTextBox.Text.Trim().ToUpper()
+        Dim isWholesale As Boolean = CheckBox1.Checked
+
+        Select Case stateCode
+            Case "IL"
+                If isWholesale Then
+                    Return 0
+                Else
+                    Return CostTextBox.Text * 0.07D
+                End If
+            Case "NY", "CA"
+                If isWholesale Then
+                    Return 0
+                Else
+                    Return CostTextBox.Text * 0.08D
+                End If
+            Case Else
+                Return 0
+        End Select
+    End Function
+
+    Private Function ComputeTransportHandling(weightPerPart As Decimal, quantity As Integer) As Decimal
+
+        Dim stateCode As String = StateTextBox.Text.Trim().ToUpper()
+
+
+        Dim usPostalCharge As Decimal = 0.15D
+        Dim usPostalAirCharge As Decimal = 0.5D
+
+        Dim handlingCharge As Decimal = 5D
+
+        Dim totalWeight As Decimal = weightPerPart * quantity
+
+        Dim transportationCharge As Decimal
+        Select Case True
+            Case PostalRadioButton.Checked
+                transportationCharge = totalWeight * usPostalCharge
+            Case AirRadioButton.Checked
+                transportationCharge = totalWeight * usPostalAirCharge
+        End Select
+
+        Dim isHandlingCharge As Boolean = stateCode <> "MO" AndAlso stateCode <> "IL" AndAlso stateCode <> "KY"
+        Dim handlingChargeTotal As Decimal = If(isHandlingCharge, handlingCharge * quantity, 0)
+
+        Return transportationCharge + handlingChargeTotal
+    End Function
+
+    Private Sub TaxTextBox_TextChanged(sender As Object, e As EventArgs) Handles TaxTextBox.TextChanged
+
+    End Sub
+
+
+End Class
+
+
+ 
