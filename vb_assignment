@@ -1,0 +1,203 @@
+Imports System.ComponentModel
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar
+
+Public Class Form1
+    Private GrandTotal As Decimal = 0
+    Private avg As Decimal = 0
+    Private Count As Integer = 0
+
+    Private Sub Label9_Click(sender As Object, e As EventArgs) Handles Label9.Click
+
+    End Sub
+
+    Private Sub ExitButton4_Click(sender As Object, e As EventArgs) Handles ExitButton4.Click
+        Dim message As DialogResult = MessageBox.Show("Exit Application", "Exit", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If message = vbYes Then
+            Me.Close()
+        End If
+    End Sub
+
+    Private Sub ResetButton2_Click(sender As Object, e As EventArgs) Handles ResetButton2.Click
+        LNTextBox1.Clear()
+        YearTextBox3.Clear()
+        VMMTextBox2.Clear()
+        PriceTextBox4.Clear()
+        DiscountTextBox5.Text = ""
+        ExtrasTextBox6.Text = ""
+        SubtotalTextBox7.Text = ""
+        SalesTaxTextBox8.Text = ""
+        TotalDueTextBox10.Text = ""
+        TradeInTextBox9.Text = "0.00"
+        NoneRadioButton1.Checked = True
+        NTCheckBox1.Checked = False
+        NEW_HD_RadioCheckBox2.Checked = False
+        BGPSCheckBox3.Checked = False
+        NFMCheckBox4.Checked = False
+        LNTextBox1.Focus()
+    End Sub
+
+    Private Sub GroupBox3_Enter(sender As Object, e As EventArgs) Handles GroupBox3.Enter
+
+    End Sub
+
+    Private Sub ExitToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem2.Click
+        Dim message As DialogResult = MessageBox.Show("Do you want to Exit", "Exit?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        If message = DialogResult.Yes Then
+            Me.Dispose()
+        End If
+    End Sub
+
+    Private Sub ExitToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem1.Click
+
+    End Sub
+
+    Private Sub TotalsButton3_Click(sender As Object, e As EventArgs) Handles TotalsButton3.Click
+        Try
+
+            Dim msg As String = "Grand Total: " + GrandTotal.ToString("C") + ControlChars.NewLine +
+              "Total cars sold: " + Count.ToString("N2") + ControlChars.NewLine +
+              "Average total: " + avg.ToString("C")
+
+            MessageBox.Show(msg, "Totals and Average", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        Catch ex As Exception
+            MessageBox.Show("No vehicles has been sold", "Zero Sales", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End Try
+    End Sub
+
+    Private Sub ComputeToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ComputeToolStripMenuItem.Click
+
+    End Sub
+
+    Private Sub ColorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ColorToolStripMenuItem.Click
+        ColorDialog1.Color = Me.BackColor
+        ColorDialog1.ShowDialog()
+        Me.BackColor = ColorDialog1.Color
+
+    End Sub
+
+    Private Sub FontToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FontToolStripMenuItem.Click
+        FontDialog1.Font = Me.Font
+        FontDialog1.ShowDialog()
+        Me.Font = FontDialog1.Font
+    End Sub
+
+    Private Sub FontColorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FontColorToolStripMenuItem.Click
+        ColorDialog1.Color = Me.ForeColor
+        ColorDialog1.ShowDialog()
+        Me.ForeColor = ColorDialog1.Color
+    End Sub
+
+    Private Sub FontAndColorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FontAndColorToolStripMenuItem.Click
+
+    End Sub
+
+    Private Sub ComputeButton1_Click(sender As Object, e As EventArgs) Handles ComputeButton1.Click
+        Try
+            'declare constants
+            Const WholeSaleDiscountRate As Double = 0.2
+            Const SalesTaxRate As Decimal = 0.05
+            'variables for exterior extras
+            Const none As Decimal = 0.00
+            Const PaintTouchUp As Decimal = 250.0
+            Const Undercoat As Decimal = 300.0
+            Const Both As Decimal = 550.0
+            'variables for accessory extras
+            Const NewTires As Decimal = 450.0
+            Const NewHDRadio As Decimal = 190.95
+            Const BuiltInGPS As Decimal = 700.0
+            Const NewFloorMats As Decimal = 55.0
+            'declare variables
+            'Dim Total As Decimal
+            Dim Discount As Decimal
+            Dim Subtotal As Decimal
+            Dim ExteriorExtras As Decimal
+            Dim AccessoryExtras As Decimal
+            Dim Tax As Decimal
+            Dim TotalDue As Decimal
+            Dim Price As Decimal
+            Dim TradeIn As Decimal
+            Dim extras As Decimal
+            'Dim saleTax As Decimal
+            Dim lotNumber As String
+            Dim year As String
+            Dim vechicleModel As String
+
+            Price = Decimal.Parse(PriceTextBox4.Text)
+            TradeIn = Decimal.Parse(TradeInTextBox9.Text)
+            lotNumber = Integer.Parse(LNTextBox1.Text)
+            year = Integer.Parse(YearTextBox3.Text)
+            vechicleModel = VMMTextBox2.Text
+
+            If NoneRadioButton1.Checked = True Then
+                ExteriorExtras = none
+            ElseIf PTURadioButton2.Checked = True Then
+                ExteriorExtras = PaintTouchUp
+            ElseIf UndercoatRadioButton3.Checked = True Then
+                ExteriorExtras = Undercoat
+            ElseIf BothRadioButton4.Checked = True Then
+                ExteriorExtras = Both
+            End If
+
+            If NTCheckBox1.Checked = True Then
+                AccessoryExtras += NewTires
+            End If
+
+            If NEW_HD_RadioCheckBox2.Checked = True Then
+                AccessoryExtras += NewHDRadio
+            End If
+
+            If BGPSCheckBox3.Checked = True Then
+                AccessoryExtras += BuiltInGPS
+            End If
+
+            If NFMCheckBox4.Checked = True Then
+                AccessoryExtras += NewFloorMats
+            End If
+
+
+            'if wholesale discount is checked apply discount
+            If WDDCheckBox5.Checked = True Then
+                Discount = Price * WholeSaleDiscountRate
+                Subtotal = Price - Discount + (ExteriorExtras + AccessoryExtras)
+            Else
+                Discount = 0.00
+                Subtotal = Price - Discount + (ExteriorExtras + AccessoryExtras)
+                Tax = SalesTaxRate * Subtotal
+
+
+            End If
+
+            extras = AccessoryExtras + ExteriorExtras
+            TotalDue = (Subtotal + Tax) - TradeIn
+
+
+            'putting the values into their respective textboxes
+            DiscountTextBox5.Text = Discount.ToString("C2")
+            ExtrasTextBox6.Text = extras.ToString("C2")
+            SubtotalTextBox7.Text = Subtotal.ToString("C2")
+            SalesTaxTextBox8.Text = Tax.ToString("C2")
+            TotalDueTextBox10.Text = TotalDue.ToString("C2")
+            'priceTextBox.Text = ToString("n2")
+
+            GrandTotal += TotalDue
+
+            Count += 1 'accumulate number of cars
+            avg = GrandTotal / Count 'find average number cars sold 
+        Catch ex As Exception
+            MessageBox.Show("TextBoxes cannot be left blank", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+
+
+    End Sub
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        TradeInTextBox9.Text = "0.00"
+    End Sub
+
+
+    Private Sub LNTextBox1_Validating(sender As Object, e As CancelEventArgs) Handles LNTextBox1.Validating
+        If LNTextBox1.Text = String.Empty And IsNumeric(LNTextBox1.Text) = False Then
+            MessageBox.Show("Lot number textbox should not be empty and should numeric" & MessageBoxIcon.Error)
+        End If
+    End Sub
+End Class
