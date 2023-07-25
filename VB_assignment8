@@ -1,0 +1,111 @@
+Imports System.Windows.Forms
+Public Class Form1
+
+Private totalPieces As Integer
+Private totalPay As Integer
+Private Sub CloseBtn_Click(sender As Object, e As EventArgs) Handles CloseBtn.Click
+Dim closeforsure As String = &quot;Are You sure you want to close the form?&quot;
+Dim result As DialogResult = MessageBox.Show(closeforsure, &quot;Quit?&quot;, MessageBoxButtons.YesNo,
+MessageBoxIcon.Question)
+If result = DialogResult.Yes Then
+Me.Close()
+End If
+End Sub
+
+Private Sub ClearBtn_Click(sender As Object, e As EventArgs) Handles ClearBtn.Click
+EmployeeName.Clear()
+NumOfPieces.Clear()
+EmployeeName.Focus()
+End Sub
+
+Private Sub CalculateBtn_Click(sender As Object, e As EventArgs) Handles CalculateBtn.Click
+&#39; Perform calculations and display amount earned in a message box
+
+Try
+&#39; Get the number of pieces completed from the TextBox
+
+Dim piecesCompleted As Integer = Integer.Parse(NumOfPieces.Text)
+
+&#39; Check if the number of pieces completed is a positive value
+If piecesCompleted &gt;= 0 Then
+&#39; Calculate the price paid based on the number of pieces completed
+Dim pricePaid As Integer
+If piecesCompleted &gt;= 1 AndAlso piecesCompleted &lt;= 200 Then
+pricePaid = 60
+ElseIf piecesCompleted &gt;= 201 AndAlso piecesCompleted &lt;= 400 Then
+pricePaid = 65
+ElseIf piecesCompleted &gt;= 401 AndAlso piecesCompleted &lt;= 600 Then
+pricePaid = 70
+Else
+pricePaid = 75
+End If
+
+&#39; Calculate the amount earned
+Dim amountEarned As Integer = pricePaid * piecesCompleted
+
+&#39; Display the amount earned in a message box
+MessageBox.Show($&quot;Amount Earned: {amountEarned} ¢&quot;)
+Else
+MessageBox.Show(&quot;Please enter a valid number of pieces completed.&quot;)
+End If
+
+Catch ex As FormatException
+MessageBox.Show(&quot;Please enter a valid number of pieces completed.&quot;)
+
+Catch ex As Exception
+
+MessageBox.Show(&quot;An error occurred during the calculation. Please try again.&quot;)
+End Try
+End Sub
+
+Private Sub SummaryBtn_Click(sender As Object, e As EventArgs) Handles SummaryBtn.Click
+&#39; Calculate and display the total number of pieces, total pay, and average pay per person in a
+message box
+
+&#39; Reset the total pieces and total pay
+totalPieces = 0
+totalPay = 0
+Dim employeeCount As Integer = 0
+
+&#39; Get the employee name and pieces completed TextBox objects
+Dim employeeNameTextBox As TextBox = EmployeeName
+Dim piecesCompletedTextBox As TextBox = NumOfPieces
+
+&#39; Check if the TextBox contains the person&#39;s name
+If Not String.IsNullOrEmpty(employeeNameTextBox.Text) Then
+&#39; Check if the pieces completed TextBox contains a valid number
+Dim piecesCompleted As Integer
+If Integer.TryParse(piecesCompletedTextBox.Text, piecesCompleted) AndAlso piecesCompleted
+&gt;= 0 Then
+&#39; Calculate the price paid based on the number of pieces completed
+Dim pricePaid As Integer
+If piecesCompleted &gt;= 1 AndAlso piecesCompleted &lt;= 200 Then
+pricePaid = 60
+ElseIf piecesCompleted &gt;= 201 AndAlso piecesCompleted &lt;= 400 Then
+pricePaid = 65
+
+ElseIf piecesCompleted &gt;= 401 AndAlso piecesCompleted &lt;= 600 Then
+pricePaid = 70
+Else
+pricePaid = 75
+End If
+
+&#39; Calculate the amount earned
+Dim amountEarned As Integer = pricePaid * piecesCompleted
+
+&#39; Update the total number of pieces, total pay, and employee count
+totalPieces += piecesCompleted
+totalPay += amountEarned
+employeeCount += 1
+End If
+End If
+
+&#39; Calculate the average pay per person
+Dim averagePay As Double = If(employeeCount &gt; 0, totalPay / employeeCount, 0)
+
+&#39; Display the summary in a message box
+MessageBox.Show($&quot;Total Pieces: {totalPieces}{Environment.NewLine}Total Pay: {totalPay}
+¢{Environment.NewLine}Average Pay Per Person: {averagePay} ¢&quot;)
+
+End Sub
+End Class
