@@ -1,0 +1,52 @@
+Public Class Form1
+Public opt As Object = &quot;&quot;
+Dim firstNum, secondNum, result As Double
+Private Sub btnPlus_Click(sender As Object, e As EventArgs) Handles btnPlus.Click
+opt = &quot;+&quot;
+Calculation()
+End Sub
+Private Sub Calculation()
+&#39;Reset all
+btnPlus.BackColor = Color.FromArgb(224, 224, 224)
+btnMinus.BackColor = Color.FromArgb(224, 224, 224)
+btnMultiply.BackColor = Color.FromArgb(224, 224, 224)
+
+&#39;Do calculation based on operand
+If txtFirst.Text &lt;&gt; &quot;&quot; And txtSecond.Text &lt;&gt; &quot;&quot; Then
+firstNum = CDbl(txtFirst.Text)
+secondNum = CDbl(txtSecond.Text)
+Select Case True
+Case opt = &quot;+&quot;
+result = firstNum + secondNum
+txtResults.Text = &quot;The result of &quot; &amp; firstNum &amp; &quot; + &quot; &amp; secondNum &amp; &quot; = &quot; &amp; result
+btnPlus.BackColor = Color.AliceBlue
+Case opt = &quot;-&quot;
+result = firstNum - secondNum
+txtResults.Text = &quot;The result of &quot; &amp; firstNum &amp; &quot; - &quot; &amp; secondNum &amp; &quot; = &quot; &amp; result
+btnMinus.BackColor = Color.AliceBlue
+Case opt = &quot;x&quot;
+result = firstNum * secondNum
+txtResults.Text = &quot;The result of &quot; &amp; firstNum &amp; &quot; X &quot; &amp; secondNum &amp; &quot; = &quot; &amp; result
+btnMultiply.BackColor = Color.AliceBlue
+End Select
+Else
+&#39;MsgBox(&quot;Please enter the First and Second Numbers&quot;)
+MessageBox.Show(&quot;Please enter the First and Second Numbers&quot;)
+End If
+End Sub
+Private Sub txtFirst_TextChanged(sender As Object, e As EventArgs) Handles txtFirst.TextChanged
+txtResults.Text = &quot;&quot;
+End Sub
+Private Sub txtSecond_TextChanged(sender As Object, e As EventArgs) Handles txtSecond.TextChanged
+txtResults.Text = &quot;&quot;
+End Sub
+Private Sub btnMinus_Click(sender As Object, e As EventArgs) Handles btnMinus.Click
+
+opt = &quot;-&quot;
+Calculation()
+End Sub
+Private Sub btnMultiply_Click(sender As Object, e As EventArgs) Handles btnMultiply.Click
+opt = &quot;x&quot;
+Calculation()
+End Sub
+End Class
