@@ -1,0 +1,154 @@
+
+Imports System.CodeDom
+Imports System.ComponentModel
+Imports System.Diagnostics.Eventing.Reader
+Imports System.Linq.Expressions
+Imports System.Xml
+
+Public Class Form1
+
+    Dim cost As Decimal
+    Dim total As Decimal
+    Dim quantity As Decimal
+    Dim counter As Integer = 0
+
+    Private Sub ExitToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ExitToolStripMenuItem.Click
+
+        Me.Close()
+    End Sub
+
+    Private Sub ValidData()
+
+        If ComboBox1.SelectedItem Is Nothing Then
+            MessageBox.Show("Select an inventory item.")
+            Return
+        End If
+
+        Dim wholesaleCost As Decimal
+        If Not Decimal.TryParse(WholesaleTextbox.Text, wholesaleCost) OrElse wholesaleCost <= 0 Then
+            MessageBox.Show("Enter a valid wholesale cost > 0.")
+            Return
+        End If
+
+
+        If Not Integer.TryParse(QuantityTextbox.Text, quantity) OrElse quantity <= 0 Then
+            MessageBox.Show("Please enter a valid quantity greater than zero.")
+            Return
+        End If
+
+
+        Dim itemValue As Decimal = quantity * wholesaleCost
+
+        Dim item As String = ComboBox1.SelectedItem.ToString()
+        Dim itemString As String = item & " - $" & itemValue.ToString()
+        RichTextBox1.Text += item & " Qty- " & quantity & " Cost- " & wholesaleCost & Environment.NewLine
+        counter += 1
+        ComboBox1.SelectedItem = Nothing
+        total += itemValue
+
+
+
+        TextBox3.Text = Decimal.Parse(total, Globalization.NumberStyles.Currency).ToString("C2")
+
+    End Sub
+
+    Private Sub ComboBox1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboBox1.SelectedIndexChanged
+
+    End Sub
+
+    Private Sub AoutToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AboutToolStripMenuItem.Click
+        MessageBox.Show("Osei-Tutu Gyimah Baffour" & Environment.NewLine & DateString)
+    End Sub
+
+    Private Sub Listingtextbox_TextChanged(sender As Object, e As EventArgs) Handles RichTextBox1.TextChanged
+
+    End Sub
+
+    Private Sub SetBackgroundToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SetBackgroundToolStripMenuItem.Click
+        ColorDialog1.Color = Me.BackColor
+        ColorDialog1.ShowDialog()
+        Me.BackColor = ColorDialog1.Color
+    End Sub
+
+    Private Sub SetFontColorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SetFontColorToolStripMenuItem.Click
+        FontDialog1.Font = Me.Font
+        FontDialog1.ShowDialog()
+        Me.Font = FontDialog1.Font
+
+    End Sub
+
+    Private Sub AdddToItemListingToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AdddToItemListingToolStripMenuItem.Click
+        ValidData()
+    End Sub
+
+    Private Sub ClearItemListingCtrlCToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ClearItemListingCtrlCToolStripMenuItem.Click
+        Dim dialog As DialogResult
+        Try
+
+            dialog = MessageBox.Show(MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, MessageBoxDefaultButton.Button2, "Do you want to clear everythiing?")
+            If dialog = Windows.Forms.DialogResult.Yes Then
+                RichTextBox1.Clear()
+                ComboBox1.SelectedItem = Nothing
+                ComboBox1.Focus()
+                WholesaleTextbox.Clear()
+                QuantityTextbox.Clear()
+                counter = 0
+            End If
+
+
+
+        Catch ex As Exception
+
+        End Try
+
+
+    End Sub
+
+    Private Sub DeleteComboBoxItemCtrlDToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteComboBoxItemCtrlDToolStripMenuItem.Click
+        Dim newItem As String = ComboBox1.Text.Trim()
+
+
+        If String.IsNullOrEmpty(newItem) Then
+            MessageBox.Show("Enter an item to remove.")
+            Return
+        End If
+
+
+        If ComboBox1.Items.Contains(newItem) = False Then
+            MessageBox.Show("There is no item like that in the list.")
+            Return
+        End If
+
+        ComboBox1.Items.Remove(newItem)
+        ComboBox1.Sorted = True
+
+
+        ComboBox1.SelectedItem = Nothing
+    End Sub
+
+    Private Sub CountItemListingCtrlOToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles CountItemListingCtrlOToolStripMenuItem.Click
+        MessageBox.Show("Items Number: " & counter)
+
+    End Sub
+
+    Private Sub AddItemToComboBoxCtrlMToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles AddItemToComboBoxCtrlMToolStripMenuItem.Click
+        Dim newItem As String = ComboBox1.Text.Trim
+        If String.IsNullOrEmpty(NewItem) Then
+            MessageBox.Show("Enter a number to add.")
+            Return
+        End If
+
+
+        If ComboBox1.Items.Contains(newItem) Then
+            MessageBox.Show("the item is in the list already.")
+            Return
+        End If
+
+        ComboBox1.Items.Add(NewItem)
+        ComboBox1.Sorted = True
+
+
+        ComboBox1.SelectedItem = NewItem
+    End Sub
+End Class
+
